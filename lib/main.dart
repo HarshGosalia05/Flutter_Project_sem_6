@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       DashboardPage(),
       CoursesPage(),
       TestsPage(),
-      // ResultsPage(),
+      ResultsPage(),
       Center(child: Text("Progress Page")),
     ];
   }
@@ -41,8 +41,28 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Gls Students Dashboard")),
+      appBar: AppBar(
+        title: Text("Gls Students Dashboard"),
+        actions: _currentIndex == 0
+            ? [
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: Icon(Icons.more_vert),
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                  ),
+                ),
+              ]
+            : null,
+      ),
       body: _pages[_currentIndex],
+      endDrawer: _currentIndex == 0
+          ? Drawer(
+              width: MediaQuery.of(context).size.width * 0.78,
+              child: SafeArea(
+                child: DashboardSidebar(),
+              ),
+            )
+          : null,
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -83,90 +103,67 @@ class _HomePageState extends State<HomePage> {
 class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // LEFT SIDE
-        Expanded(
-          flex: 3,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // PINNED SUBJECTS
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              "📌 Pinned Subjects",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            height: 120,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
               children: [
-                // PINNED SUBJECTS
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "📌 Pinned Subjects",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  height: 120,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      courseCard(context, "MAD"),
-                      courseCard(context, "ML"),
-                      courseCard(context, "CC"),
-                    ],
-                  ),
-                ),
-
-                // RECENTLY ACCESSED
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "🕒 Recently Accessed",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Column(
-                  children: [
-                    listTile(context, "Blockchain"),
-                    listTile(context, "Cloud"),
-                    listTile(context, "Machine Learning"),
-                  ],
-                ),
-
-                // ALL COURSES
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "📚 All Courses",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    courseCard(context, "MAD"),
-                    courseCard(context, "ML"),
-                    courseCard(context, "CC"),
-                    courseCard(context, "Blockchain"),
-                  ],
-                ),
+                courseCard(context, "MAD"),
+                courseCard(context, "ML"),
+                courseCard(context, "CC"),
               ],
             ),
           ),
-        ),
 
-        // RIGHT SIDEBAR
-        Expanded(
-          flex: 1,
-          child: Container(
-            color: Colors.grey[200],
-            child: Column(
-              children: [
-                sidebarCard("📅 Timeline", ["Assignment Due", "Lecture Today"]),
-                sidebarCard("📁 Private Files", ["Notes.pdf", "Lab.doc"]),
-                sidebarCard("⏰ Events", ["Quiz Tomorrow", "Submission"]),
-              ],
+          // RECENTLY ACCESSED
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              "🕒 Recently Accessed",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-        ),
-      ],
+          Column(
+            children: [
+              listTile(context, "Blockchain"),
+              listTile(context, "Cloud"),
+              listTile(context, "Machine Learning"),
+            ],
+          ),
+
+          // ALL COURSES
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              "📚 All Courses",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              courseCard(context, "MAD"),
+              courseCard(context, "ML"),
+              courseCard(context, "CC"),
+              courseCard(context, "Blockchain"),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -218,6 +215,50 @@ class DashboardPage extends StatelessWidget {
             child: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           ...items.map((e) => ListTile(title: Text(e))).toList(),
+        ],
+      ),
+    );
+  }
+}
+
+class DashboardSidebar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey[200],
+      child: ListView(
+        padding: EdgeInsets.only(bottom: 12),
+        children: [
+          sidebarCard("📅 Timeline", ["Assignment Due", "Lecture Today"]),
+          sidebarCard("📁 Private Files", ["Notes.pdf", "Lab.doc"]),
+          sidebarCard("⏰ Events", ["Quiz Tomorrow", "Submission"]),
+        ],
+      ),
+    );
+  }
+
+  Widget sidebarCard(String title, List<String> items) {
+    return Card(
+      margin: EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          ...items
+              .map(
+                (e) => ListTile(
+                  dense: true,
+                  title: Text(
+                    e,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              )
+              .toList(),
         ],
       ),
     );
