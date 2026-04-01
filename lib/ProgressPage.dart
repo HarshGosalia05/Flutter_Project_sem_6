@@ -10,9 +10,20 @@ class ProgressPage extends StatelessWidget {
     int totalScore = 0;
     int totalQuestions = 0;
 
-    for (var r in results) {
-      totalScore += (r["score"] ?? 0) as int;
-      totalQuestions += (r["total"] ?? 0) as int;
+    List<FlSpot> spots = [];
+
+    for (int i = 0; i < results.length; i++) {
+      var r = results[i];
+
+      int score = (r["score"] ?? 0);
+      int total = (r["total"] ?? 1);
+
+      double percent = (score / total) * 100;
+
+      spots.add(FlSpot(i.toDouble(), percent));
+
+      totalScore += score;
+      totalQuestions += total;
     }
 
     double percentage =
@@ -27,30 +38,32 @@ class ProgressPage extends StatelessWidget {
               child: Column(
                 children: [
 
-                  // 📊 BAR GRAPH
+                  // 📈 LINE GRAPH
                   SizedBox(
-                    height: 200,
-                    child: BarChart(
-                      BarChartData(
-                        titlesData: FlTitlesData(show: false),
-                        borderData: FlBorderData(show: false),
-                        barGroups: results.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          var r = entry.value;
+                    height: 250,
+                    child: LineChart(
+                      LineChartData(
+                        minY: 0,
+                        maxY: 100,
 
-                          double percent =
-                              (r["score"] / r["total"]) * 100;
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: true),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: true),
+                          ),
+                        ),
 
-                          return BarChartGroupData(
-                            x: index,
-                            barRods: [
-                              BarChartRodData(
-                                toY: percent,
-                                width: 15,
-                              ),
-                            ],
-                          );
-                        }).toList(),
+                        borderData: FlBorderData(show: true),
+
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: spots,
+                            isCurved: true,
+                            dotData: FlDotData(show: true),
+                          ),
+                        ],
                       ),
                     ),
                   ),
