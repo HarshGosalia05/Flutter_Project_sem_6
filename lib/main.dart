@@ -5,6 +5,8 @@ import 'package:gls_students/TestsPage.dart';
 import 'package:gls_students/Resultpage.dart';
 import 'package:gls_students/ProgressPage.dart';
 import 'package:gls_students/ProfilePage.dart';
+import 'package:gls_students/EventsPage.dart';
+import 'package:gls_students/FilesPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -394,57 +396,6 @@ class DashboardSidebar extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class FilesPage extends StatefulWidget {
-  @override
-  _FilesPageState createState() => _FilesPageState();
-}
-
-class _FilesPageState extends State<FilesPage> {
-  List<String> files = ["Notes.pdf", "Assignment.doc"];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("My Files")),
-      body: ListView.builder(
-        itemCount: files.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Icon(Icons.insert_drive_file),
-            title: Text(files[index]),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class EventsPage extends StatelessWidget {
-  final List<String> events = [
-    "Quiz Tomorrow",
-    "Assignment Submission",
-    "Lecture at 10 AM",
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Events")),
-      body: ListView.builder(
-        itemCount: events.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              leading: Icon(Icons.event),
-              title: Text(events[index]),
-            ),
-          );
-        },
       ),
     );
   }
