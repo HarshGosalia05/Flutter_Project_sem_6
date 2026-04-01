@@ -4,6 +4,8 @@ import 'package:gls_students/CourseDetailPage.dart';
 import 'package:gls_students/TestsPage.dart';
 import 'package:gls_students/Resultpage.dart';
 import 'package:gls_students/ProgressPage.dart';
+import 'package:gls_students/ProfilePage.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -391,27 +393,6 @@ class DashboardSidebar extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
-      body: Column(
-        children: [
-          SizedBox(height: 20),
-          CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
-          SizedBox(height: 10),
-          Text("Harsh", style: TextStyle(fontSize: 20)),
-          Text("B.Tech AIML"),
-
-          ListTile(title: Text("Email: harsh@gmail.com")),
-          ListTile(title: Text("University: GLS")),
         ],
       ),
     );
