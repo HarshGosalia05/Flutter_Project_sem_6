@@ -3,7 +3,7 @@ import 'package:gls_students/CoursesPage.dart';
 import 'package:gls_students/CourseDetailPage.dart';
 import 'package:gls_students/TestsPage.dart';
 import 'package:gls_students/Resultpage.dart';
-
+import 'package:gls_students/ProgressPage.dart';
 void main() {
   runApp(MyApp());
 }
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       CoursesPage(),
       TestsPage(),
       ResultsPage(),
-      Center(child: Text("Progress Page")),
+      ProgressPage(),
     ];
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'Resultpage.dart';
 import 'data.dart';
 
 class QuizPage extends StatefulWidget {
@@ -13,9 +12,9 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   Map<int, String> selectedAnswers = {};
-
   int score = 0;
 
+  // ✅ SUBMIT QUIZ
   void submitQuiz() {
     score = 0;
 
@@ -25,14 +24,14 @@ class _QuizPageState extends State<QuizPage> {
       }
     }
 
-    // 🔥 SAVE RESULT HERE
+    // 🔥 SAVE RESULT
     results.add({
       "testName": "Test ${DateTime.now().toString()}",
       "score": score,
       "total": widget.questions.length,
     });
 
-    // RESULT SHOW
+    // ✅ SHOW RESULT
     showDialog(
       context: context,
       builder: (context) {
@@ -42,8 +41,8 @@ class _QuizPageState extends State<QuizPage> {
           actions: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
+                Navigator.pop(context); // close dialog
+                Navigator.pop(context); // go back
               },
               child: Text("OK"),
             ),
@@ -57,57 +56,58 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Quiz")),
+
+      // 🔥 MAIN BODY
       body: widget.questions.isEmpty
           ? Center(child: Text("No questions added"))
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: widget.questions.length,
-                    itemBuilder: (context, index) {
-                      var q = widget.questions[index];
+          : ListView.builder(
+              itemCount: widget.questions.length,
+              itemBuilder: (context, index) {
+                var q = widget.questions[index];
 
-                      return Card(
-                        margin: EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                "Q${index + 1}. ${q["question"]}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-
-                            ...q["options"].map<Widget>((option) {
-                              return RadioListTile(
-                                title: Text(option),
-                                value: option,
-                                groupValue: selectedAnswers[index],
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedAnswers[index] = value.toString();
-                                  });
-                                },
-                              );
-                            }).toList(),
-                          ],
+                return Card(
+                  margin: EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          "Q${index + 1}. ${q["question"]}",
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
 
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: ElevatedButton(
-                    onPressed: submitQuiz,
-                    child: Text("Submit Test"),
+                      // OPTIONS
+                      ...q["options"].map<Widget>((option) {
+                        return RadioListTile(
+                          title: Text(option),
+                          value: option,
+                          groupValue: selectedAnswers[index],
+                          onChanged: (value) {
+                            setState(() {
+                              selectedAnswers[index] = value.toString();
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
+
+      // 🔥 FIXED SUBMIT BUTTON (ALWAYS VISIBLE)
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(10),
+        child: ElevatedButton(
+          onPressed: submitQuiz,
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.all(15),
+          ),
+          child: Text("Submit Test"),
+        ),
+      ),
     );
   }
 }
