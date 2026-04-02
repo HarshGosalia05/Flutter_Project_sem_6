@@ -238,7 +238,8 @@ class DashboardPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CourseDetailPage(courseName: title),
+            builder: (context) =>
+                CourseDetailPage(courseName: title, color: color),
           ),
         );
       },
@@ -293,7 +294,8 @@ class DashboardPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CourseDetailPage(courseName: title),
+              builder: (context) =>
+                  CourseDetailPage(courseName: title, color: Colors.blue),
             ),
           );
         },

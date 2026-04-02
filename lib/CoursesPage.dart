@@ -24,7 +24,7 @@ class _CoursesPageState extends State<CoursesPage> {
     filteredCourses = allCourses;
   }
 
-  // 🔍 SEARCH FUNCTION
+  // 🔍 SEARCH
   void searchCourses(String query) {
     setState(() {
       filteredCourses = allCourses
@@ -36,19 +36,30 @@ class _CoursesPageState extends State<CoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Courses")),
+      backgroundColor: Color(0xFFF7F9FC),
+
+      appBar: AppBar(
+        title: Text("Courses"),
+        centerTitle: true,
+        backgroundColor: Color(0xFF4DA3FF),
+      ),
+
       body: Column(
         children: [
-          // 🔍 SEARCH BAR
+          // 🔍 SEARCH BAR (UPGRADED)
           Padding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(12),
             child: TextField(
-              onChanged: searchCourses, // 👈 IMPORTANT
+              onChanged: searchCourses,
               decoration: InputDecoration(
                 hintText: "Search Courses...",
                 prefixIcon: Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(vertical: 12),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
@@ -56,16 +67,21 @@ class _CoursesPageState extends State<CoursesPage> {
 
           // 📚 GRID
           Expanded(
-            child: GridView.builder(
-              itemCount: filteredCourses.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.2,
-              ),
-              itemBuilder: (context, index) {
-                return courseCard(context, filteredCourses[index]);
-              },
-            ),
+            child: filteredCourses.isEmpty
+                ? Center(child: Text("No courses found"))
+                : GridView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    itemCount: filteredCourses.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 1.1,
+                    ),
+                    itemBuilder: (context, index) {
+                      return courseCard(context, filteredCourses[index], index);
+                    },
+                  ),
           ),
         ],
       ),
@@ -73,19 +89,60 @@ class _CoursesPageState extends State<CoursesPage> {
   }
 
   ////////////////////////////////////////////////////////////
-  Widget courseCard(BuildContext context, String title) {
+  // 🔥 PREMIUM CARD
+  ////////////////////////////////////////////////////////////
+
+  Widget courseCard(BuildContext context, String title, int index) {
+    List<Color> colors = [
+      Colors.deepPurple,
+      Colors.teal,
+      Colors.orange,
+      Colors.blueGrey,
+      Colors.indigo,
+      Colors.green,
+    ];
+
+    Color color = colors[index % colors.length];
+
     return InkWell(
+      borderRadius: BorderRadius.circular(15),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CourseDetailPage(courseName: title),
+            builder: (context) =>
+                CourseDetailPage(courseName: title, color: color),
           ),
         );
       },
       child: Card(
-        margin: EdgeInsets.all(10),
-        child: Center(child: Text(title)),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: LinearGradient(
+              colors: [color.withOpacity(0.15), Colors.white],
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.menu_book, color: color, size: 35),
+
+              SizedBox(height: 10),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
