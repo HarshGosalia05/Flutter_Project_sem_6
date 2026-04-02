@@ -1,6 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+
+  String name = "";
+  String email = "";
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  // 🔥 LOAD USER DATA
+  void loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString('name') ?? "";
+      email = prefs.getString('email') ?? "";
+    });
+  }
+
+  // 🔥 LOGOUT WITH CONFIRMATION
+  void logout() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Logout"),
+          content: Text("Are you sure you want to logout?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              child: Text("Logout"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +76,9 @@ class ProfilePage extends StatelessWidget {
 
           SizedBox(height: 10),
 
+          // 🔥 SAFE NAME (no blank issue)
           Text(
-            "Harsh",
+            name.isEmpty ? "User" : name,
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
 
@@ -36,7 +92,11 @@ class ProfilePage extends StatelessWidget {
               children: [
                 ListTile(
                   leading: Icon(Icons.email),
-                  title: Text("harsh@gmail.com"),
+
+                  // 🔥 SAFE EMAIL
+                  title: Text(
+                    email.isEmpty ? "No email found" : email,
+                  ),
                 ),
                 Divider(),
                 ListTile(
@@ -45,6 +105,14 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+
+          SizedBox(height: 20),
+
+          // 🔥 LOGOUT BUTTON (same UI)
+          ElevatedButton(
+            onPressed: logout,
+            child: Text("Logout"),
           ),
         ],
       ),

@@ -5,6 +5,8 @@ import 'package:gls_students/TestsPage.dart';
 import 'package:gls_students/Resultpage.dart';
 import 'package:gls_students/ProgressPage.dart';
 import 'package:gls_students/ProfilePage.dart';
+import 'package:gls_students/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,8 +15,33 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomePage());
+    return MaterialApp(
+  debugShowCheckedModeBanner: false,
+
+  routes: {
+    '/login': (context) => LoginPage(),
+    '/home': (context) => HomePage(),
+  },
+
+  home: FutureBuilder(
+    future: checkLogin(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) {
+        return Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      return snapshot.data == true ? HomePage() : LoginPage();
+    },
+  ),
+);
   }
+  
+ Future<bool> checkLogin() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isLoggedIn') ?? false;
+}
 }
 
 class HomePage extends StatefulWidget {
@@ -333,7 +360,7 @@ class DashboardSidebar extends StatelessWidget {
             ),
             child: ListTile(
               leading: CircleAvatar(child: Icon(Icons.person)),
-              title: Text("Harsh"),
+              title: Text("name"),
               subtitle: Text("Student"),
             ),
           ),
@@ -447,5 +474,11 @@ class EventsPage extends StatelessWidget {
         },
       ),
     );
+    
   }
+  Future<bool> checkLogin() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isLoggedIn') ?? false;
+}
+  
 }
