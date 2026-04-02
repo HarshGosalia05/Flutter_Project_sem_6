@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gls_students/EditProfilePage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -7,9 +8,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-  String name = "";
-  String email = "";
+  // 🔥 DYNAMIC DATA
+  String name = "Harsh";
+  String course = "B.Tech AIML";
+  String email = "harsh@gmail.com";
+  String university = "GLS University";
 
   @override
   void initState() {
@@ -21,8 +24,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      name = prefs.getString('name') ?? "";
-      email = prefs.getString('email') ?? "";
+      name = prefs.getString('name') ?? "Harsh";
+      email = prefs.getString('email') ?? "harsh@gmail.com";
     });
   }
 
@@ -62,59 +65,164 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Color(0xFFF7F9FC),
       appBar: AppBar(
         title: Text("Profile"),
+        centerTitle: true,
+        elevation: 0,
         backgroundColor: Color(0xFF4DA3FF),
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 20),
-
-          CircleAvatar(
-            radius: 45,
-            backgroundColor: Colors.blue[100],
-            child: Icon(Icons.person, size: 45, color: Colors.blue),
-          ),
-
-          SizedBox(height: 10),
-
-          // 🔥 SAFE NAME (no blank issue)
-          Text(
-            name.isEmpty ? "User" : name,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-
-          Text("B.Tech AIML", style: TextStyle(color: Colors.grey)),
-
-          SizedBox(height: 20),
-
-          Card(
-            margin: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.email),
-
-                  // 🔥 SAFE EMAIL
-                  title: Text(
-                    email.isEmpty ? "No email found" : email,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // 🔥 TOP HEADER
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 25),
+              decoration: BoxDecoration(
+                color: Color(0xFF4DA3FF),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(25),
+                  bottomRight: Radius.circular(25),
+                ),
+              ),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 45,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 45, color: Colors.blue),
                   ),
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(Icons.school),
-                  title: Text("GLS University"),
-                ),
-              ],
+
+                  SizedBox(height: 10),
+
+                  Text(
+                    name.isEmpty ? "User" : name,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+
+                  Text(
+                    course,
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          SizedBox(height: 20),
+            SizedBox(height: 15),
 
-          // 🔥 LOGOUT BUTTON (same UI)
-          ElevatedButton(
-            onPressed: logout,
-            child: Text("Logout"),
-          ),
-        ],
+            // 🔥 INFO CARD
+            Card(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.email, color: Colors.blue),
+                    title: Text(email.isEmpty ? "No email found" : email),
+                  ),
+                  Divider(),
+                  ListTile(
+                    leading: Icon(Icons.school, color: Colors.orange),
+                    title: Text(university),
+                  ),
+                ],
+              ),
+            ),
+
+            // 🔥 STATS
+            Padding(
+              padding: EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  statCard("Courses", "5"),
+                  statCard("Tests", "3"),
+                  statCard("Score", "80%"),
+                ],
+              ),
+            ),
+
+            // 🔥 BUTTONS
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                children: [
+                  // ✅ EDIT PROFILE
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF4DA3FF),
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: Icon(Icons.edit),
+                    label: Text("Edit Profile"),
+
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => EditProfilePage()),
+                      );
+
+                      if (result != null) {
+                        setState(() {
+                          name = result["name"] ?? name;
+                          course = result["course"] ?? course;
+                          email = result["email"] ?? email;
+                          university = result["university"] ?? university;
+                        });
+                      }
+                    },
+                  ),
+
+                  SizedBox(height: 10),
+
+                  // LOGOUT
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: Icon(Icons.logout, color: Colors.red),
+                    label: Text("Logout", style: TextStyle(color: Colors.red)),
+                    onPressed: logout,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  ////////////////////////////////////////////////////////////
+  // 🔥 STAT CARD
+  ////////////////////////////////////////////////////////////
+
+  Widget statCard(String title, String value) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text(title, style: TextStyle(color: Colors.grey)),
+          ],
+        ),
       ),
     );
   }

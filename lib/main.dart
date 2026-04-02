@@ -5,8 +5,6 @@ import 'package:gls_students/TestsPage.dart';
 import 'package:gls_students/Resultpage.dart';
 import 'package:gls_students/ProgressPage.dart';
 import 'package:gls_students/ProfilePage.dart';
-import 'package:gls_students/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -474,11 +472,5 @@ class EventsPage extends StatelessWidget {
         },
       ),
     );
-    
   }
-  Future<bool> checkLogin() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('isLoggedIn') ?? false;
-}
-  
 }
