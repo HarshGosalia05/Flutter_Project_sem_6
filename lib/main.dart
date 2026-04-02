@@ -5,6 +5,8 @@ import 'package:gls_students/TestsPage.dart';
 import 'package:gls_students/Resultpage.dart';
 import 'package:gls_students/ProgressPage.dart';
 import 'package:gls_students/ProfilePage.dart';
+import 'package:gls_students/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -345,7 +347,33 @@ class DashboardPage extends StatelessWidget {
 //     );
 //   }
 // }
-class DashboardSidebar extends StatelessWidget {
+
+
+class DashboardSidebar extends StatefulWidget {
+  @override
+  _DashboardSidebarState createState() => _DashboardSidebarState();
+}
+
+class _DashboardSidebarState extends State<DashboardSidebar> {
+
+  String name = "Loading...";
+  String email = "";
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  void loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      name = prefs.getString('name') ?? "User";
+      email = prefs.getString('email') ?? "";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -353,15 +381,16 @@ class DashboardSidebar extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.all(10),
         children: [
-          // 👤 PROFILE
+
+          // 👤 PROFILE (DYNAMIC)
           Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             child: ListTile(
               leading: CircleAvatar(child: Icon(Icons.person)),
-              title: Text("name"),
-              subtitle: Text("Student"),
+              title: Text(name), // 🔥 NOW DYNAMIC
+              subtitle: Text(email.isEmpty ? "Student" : email),
             ),
           ),
 
@@ -385,6 +414,7 @@ class DashboardSidebar extends StatelessWidget {
           Card(
             child: Column(
               children: [
+
                 ListTile(
                   leading: Icon(Icons.person),
                   title: Text("Profile"),

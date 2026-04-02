@@ -124,29 +124,106 @@ class _TestsPageState extends State<TestsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Tests")),
+      backgroundColor: Color(0xFFF6F7FB),
+
+      appBar: AppBar(
+        title: Text("Tests"),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 1,
+      ),
+
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color.fromARGB(255, 58, 139, 183),
+        icon: Icon(Icons.add),
+        label: Text("Create Test"),
+        onPressed: addTestDialog,
+      ),
 
       body: Column(
         children: [
-          // ➕ GENERATE TEST BUTTON
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: ElevatedButton(
-              onPressed: addTestDialog,
-              child: Text("Generate Test"),
+          SizedBox(height: 10),
+
+          // 📊 HEADER
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 58, 114, 183).withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.quiz, color: const Color.fromARGB(255, 58, 85, 183)),
+                SizedBox(width: 10),
+                Text(
+                  "Your Tests",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ],
             ),
           ),
+
+          SizedBox(height: 10),
 
           // 📋 TEST LIST
           Expanded(
             child: tests.isEmpty
-                ? Center(child: Text("No tests created"))
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.quiz_outlined, size: 60, color: Colors.grey),
+                        SizedBox(height: 10),
+                        Text("No tests created"),
+                      ],
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: tests.length,
                     itemBuilder: (context, index) {
-                      return Card(
+                      return Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 5),
+                          ],
+                        ),
                         child: ListTile(
-                          title: Text(tests[index]["name"]),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+
+                          // 🔥 LEFT ICON
+                          leading: CircleAvatar(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              80,
+                              171,
+                              223,
+                            ).withOpacity(0.15),
+                            child: Icon(
+                              Icons.quiz,
+                              color: const Color.fromARGB(255, 58, 139, 183),
+                            ),
+                          ),
+
+                          // 📝 TITLE
+                          title: Text(
+                            tests[index]["name"],
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+
+                          subtitle: Text(
+                            "${tests[index]["questions"].length} Questions",
+                          ),
 
                           // 👉 OPEN QUIZ
                           onTap: () {
@@ -160,19 +237,22 @@ class _TestsPageState extends State<TestsPage> {
                             );
                           },
 
-                          // 👉 RIGHT SIDE BUTTONS
+                          // 👉 ACTION BUTTONS
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // ➕ ADD MCQ
                               IconButton(
-                                icon: Icon(Icons.add, color: Colors.green),
+                                icon: Icon(
+                                  Icons.add_circle,
+                                  color: Colors.green,
+                                ),
                                 onPressed: () {
                                   addQuestionDialog(index);
                                 },
                               ),
 
-                              // ❌ DELETE TEST
+                              // ❌ DELETE
                               IconButton(
                                 icon: Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
