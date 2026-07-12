@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'database_helper.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -12,9 +14,11 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController password = TextEditingController();
 
   void register() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     if (name.text.isEmpty || email.text.isEmpty || password.text.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Fill all fields")));
+      messenger.showSnackBar(SnackBar(content: Text("Fill all fields")));
       return;
     }
 
@@ -24,10 +28,10 @@ class _RegisterPageState extends State<RegisterPage> {
       "password": password.text,
     });
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Registered Successfully")));
+    messenger.showSnackBar(SnackBar(content: Text("Registered Successfully")));
 
-    Navigator.pop(context); // back to login
+    if (!mounted) return;
+    navigator.pushReplacementNamed('/login');
   }
 
   @override
@@ -53,17 +57,14 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: register,
-              child: Text("Register"),
-            ),
+            ElevatedButton(onPressed: register, child: Text("Register")),
 
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               child: Text("Already have account? Login"),
-            )
+            ),
           ],
         ),
       ),

@@ -4,6 +4,8 @@ import 'database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -13,19 +15,25 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController password = TextEditingController();
 
   void login() async {
-    var user = await DatabaseHelper.instance
-        .loginUser(email.text, password.text);
+    var user = await DatabaseHelper.instance.loginUser(
+      email.text,
+      password.text,
+    );
 
     if (user != null) {
       final prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isLoggedIn', true);
-      prefs.setString('name', user['name']);
-      prefs.setString('email', user['email']);
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('name', user['name']);
+      await prefs.setString('email', user['email']);
+
+      if (!mounted) return;
 
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Login Failed")));
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Login Failed")));
     }
   }
 
@@ -37,22 +45,27 @@ class _LoginPageState extends State<LoginPage> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(controller: email, decoration: InputDecoration(labelText: "Email")),
-            TextField(controller: password, decoration: InputDecoration(labelText: "Password")),
+            TextField(
+              controller: email,
+              decoration: InputDecoration(labelText: "Email"),
+            ),
+            TextField(
+              controller: password,
+              decoration: InputDecoration(labelText: "Password"),
+            ),
             SizedBox(height: 20),
             ElevatedButton(onPressed: login, child: Text("Login")),
-          TextButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RegisterPage()),
-    );
-  },
-  child: Text("Don't have account? Register"),
-),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterPage()),
+                );
+              },
+              child: Text("Don't have account? Register"),
+            ),
           ],
         ),
-        
       ),
     );
   }

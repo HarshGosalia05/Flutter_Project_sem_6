@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gls_students/EditProfilePage.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -48,6 +50,8 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.clear();
+
+                if (!context.mounted) return;
 
                 Navigator.pushReplacementNamed(context, '/login');
               },
@@ -102,10 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
 
-                  Text(
-                    course,
-                    style: TextStyle(color: Colors.white70),
-                  ),
+                  Text(course, style: TextStyle(color: Colors.white70)),
                 ],
               ),
             ),

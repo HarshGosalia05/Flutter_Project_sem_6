@@ -13,38 +13,40 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-  debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
 
-  routes: {
-    '/login': (context) => LoginPage(),
-    '/home': (context) => HomePage(),
-  },
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/home': (context) => HomePage(),
+      },
 
-  home: FutureBuilder(
-    future: checkLogin(),
-    builder: (context, snapshot) {
-      if (!snapshot.hasData) {
-        return Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
-      }
+      home: FutureBuilder(
+        future: checkLogin(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Scaffold(body: Center(child: CircularProgressIndicator()));
+          }
 
-      return snapshot.data == true ? HomePage() : LoginPage();
-    },
-  ),
-);
+          return snapshot.data == true ? HomePage() : LoginPage();
+        },
+      ),
+    );
   }
-  
- Future<bool> checkLogin() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('isLoggedIn') ?? false;
-}
+
+  Future<bool> checkLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -348,14 +350,12 @@ class DashboardPage extends StatelessWidget {
 //   }
 // }
 
-
 class DashboardSidebar extends StatefulWidget {
   @override
   _DashboardSidebarState createState() => _DashboardSidebarState();
 }
 
 class _DashboardSidebarState extends State<DashboardSidebar> {
-
   String name = "Loading...";
   String email = "";
 
@@ -381,7 +381,6 @@ class _DashboardSidebarState extends State<DashboardSidebar> {
       child: ListView(
         padding: EdgeInsets.all(10),
         children: [
-
           // 👤 PROFILE (DYNAMIC)
           Card(
             shape: RoundedRectangleBorder(
@@ -414,7 +413,6 @@ class _DashboardSidebarState extends State<DashboardSidebar> {
           Card(
             child: Column(
               children: [
-
                 ListTile(
                   leading: Icon(Icons.person),
                   title: Text("Profile"),
